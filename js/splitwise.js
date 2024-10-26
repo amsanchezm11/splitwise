@@ -135,10 +135,10 @@ function checkInputs() {
         importe.value = "";
         fecha.value = "";
         // RESETEO LAS CLASES DE LOS INPUTS PARA QUE NO SE LE QUEDE EL COLOR VERDE DEL BORDER
-        usuario.className= "";
-        titulo.className= "";
-        importe.className="";
-        fecha.className="";
+        usuario.className = "";
+        titulo.className = "";
+        importe.className = "";
+        fecha.className = "";
     }
 }
 
@@ -153,65 +153,18 @@ function registrarGasto(usuarioNombre, gasto) {
         if (usuarioNombre === usuario.nombre) {
             usuario.aniadirGasto(gasto);
             modificarDeuda();
-            crearCarta(usuario, gasto);
+            //crearCarta(usuario, gasto);
+            crearCarta(usuario, gasto, "Resumen");
         }
     });
 }
 
 //FUNCIÓN CREAR CARTA AL USUARIO
-// PARAMETROS --> SE LE INGRESA POR PARAMETROS EL USUARIO QUE HA REALIZADO EL GASTO Y EL PROPIO GASTO
-// ¿QUÉ HACE LA FUNCIÓN? --> CREA LA CARTA QUE CONTENDRÁ EL RESUMEN DEL GASTO(TITULO,FECHA E IMPORTE) Y EL USUARIO QUE LO REALIZÓ JUNTO CON SU FOTO
-function crearCarta(usuario, gasto) {
-
-    // SELECCIÓN DEL ELEMENTO PADRE
-    let contenedorResumen = document.getElementById("resumen");
-
-    // CREACION DE ELEMENTOS:
-
-    // DIV CONTENEDOR CARTA
-    let contenedorCarta = document.createElement("div");
-    contenedorCarta.setAttribute("class", "card mb-12 espacio");
-    // DIV FILA
-    let fila = document.createElement("div");
-    fila.setAttribute("class", "row g-0");
-    // DIV COLUMNA 1
-    let columna1 = document.createElement("div");
-    columna1.setAttribute("class", "col-md-2");
-    // IMAGEN
-    let imagen = document.createElement("img");
-    imagen.setAttribute("src", usuario.pathImg);
-    imagen.setAttribute("class", "img-fluid rounded-start");
-    // DIV COLUMNA 2
-    let columna2 = document.createElement("div");
-    columna2.setAttribute("class", "col-md-10");
-    // BODY DE LA CARTA
-    let cardBody = document.createElement("div");
-    cardBody.setAttribute("class", "card-body");
-    // H5
-    let h5 = document.createElement("h5");
-    h5.setAttribute("class", "card-title");
-    h5.innerHTML = usuario.nombre;
-    // PARRAFO
-    
-    let p = document.createElement("p");
-    p.setAttribute("class", "card-text");
-    p.innerHTML = "Pagó " + gasto.monto + "&euro; el " + gasto.fecha + ".";
-
-    // SE AÑADEN LOS ELEMENTOS HIJOS A LOS ELEMENTOS PADRES CORRESPONDIENTES
-    columna1.appendChild(imagen);
-    cardBody.append(h5, p);
-    columna2.appendChild(cardBody);
-    fila.append(columna1, columna2);
-    contenedorCarta.appendChild(fila);
-    contenedorResumen.appendChild(contenedorCarta);
-}
-
-// FUNCION CREAR CUENTA DEL USUARIO --> TARJETAS DE LA PESTAÑA CUENTA
-// PARAMETROS --> SE LE INGRESA POR PARAMETROS EL USUARIO
-// ¿QUÉ HACE LA FUNCIÓN? --> CREA LA CARTA QUE CONTENDRÁ LA CUENTA FINAL DE LOS GASTOS
-function crearCuenta(usuario) {
-    // SELECCION DEL ELEMENTO PADRE
-    let contenedorCuenta = document.getElementById("cuenta");
+// PARAMETROS --> SE LE INGRESA POR PARAMETROS EL USUARIO QUE HA REALIZADO EL GASTO Y EL PROPIO GASTO JUNTO AL TIPO QUE SERÁ O "Resumen" O "Cuenta"
+// ¿QUÉ HACE LA FUNCIÓN? -->
+// CASO CARTA RESUMEN ---> CREA LA CARTA QUE CONTENDRÁ EL RESUMEN DEL GASTO(TITULO,FECHA E IMPORTE) Y EL USUARIO QUE LO REALIZÓ JUNTO CON SU FOTO
+// CASO CARTA CUENTA --> LA CARTA CONTENDRÁ EL RESUMEN DE LO QUE HA PAGADO EL UUSUARIO EN TOTAL Y LO QUE DEBE/LE DEBEN O SI LA CUENTA ESTÁ SALDADA
+function crearCarta(usuario, gasto, tipo) {
 
     // CREACION DE ELEMENTOS:
 
@@ -241,8 +194,10 @@ function crearCuenta(usuario) {
     // PARRAFO
     let p = document.createElement("p");
     p.setAttribute("class", "card-text");
-    p.setAttribute("id", `${usuario.nombre}`);   // SE LE AÑADE EL NOMBRE USUARIO COMO ID PARA LUEGO PODER MODIFICARLE EL CONTENIDO
-    p.innerHTML = "Ha pagado 0 &euro; se le debe 0&euro;.";
+    // SI ES CUENTA EL PÁRRAFO TENDRÁ ID PARA LUEGO PODER MODIFICAR SU CONTENIDO
+    if (tipo === "Cuenta") {
+        p.setAttribute("id", `${usuario.nombre}`);   // SE LE AÑADE EL NOMBRE USUARIO COMO ID PARA LUEGO PODER MODIFICARLE EL CONTENIDO
+    }
 
     // SE AÑADEN LOS ELEMENTOS HIJOS A LOS ELEMENTOS PADRES CORRESPONDIENTES
     columna1.appendChild(imagen);
@@ -250,7 +205,20 @@ function crearCuenta(usuario) {
     columna2.appendChild(cardBody);
     fila.append(columna1, columna2);
     contenedorCarta.appendChild(fila);
-    contenedorCuenta.appendChild(contenedorCarta);
+    //contenedorResumen.appendChild(contenedorCarta);
+
+    // SEGÚN EL TIPO EL PADRE SERÁ "contenedorResumen" O "contenedorCuenta"
+    if (tipo === "Resumen") {
+        // CONTENEDOR PADRE
+        let contenedorResumen = document.getElementById("resumen");
+        p.innerHTML = "Pagó " + gasto.monto + "&euro; el " + gasto.fecha + ".";
+        contenedorResumen.appendChild(contenedorCarta);
+    } else if (tipo === "Cuenta") {
+        // CONTENEDOR PADRE
+        let contenedorCuenta = document.getElementById("cuenta");
+        p.innerHTML = "Ha pagado 0 &euro; se le debe 0&euro;.";
+        contenedorCuenta.appendChild(contenedorCarta);
+    }
 }
 
 // FUNCION MODIFICAR DEUDA DEL USUARIO
@@ -265,7 +233,7 @@ function modificarDeuda() {
         let gastoUsuario = usuario.calcularGastos();
         // RETRIBUCION DE CADA USUARIO
         let deuda = gastoUsuario - calcularRetribucion();
-        
+
         if (deuda == 0) {
             parrafo.innerHTML = "Ha pagado " + gastoUsuario + "&euro; su cuenta está saldada."
         } else if (deuda > 0) {
@@ -280,7 +248,7 @@ function modificarDeuda() {
 // ¿QUÉ HACE LA FUNCIÓN? --> POR CADA USUARIO GENERA LA TARJETA EN LA PESTAÑA DE CUENTAS
 function generarCuentas() {
     for (let i = 0; i < usuarios.length; i++) {
-        crearCuenta(usuarios[i]);
+        crearCarta(usuarios[i], null, "Cuenta");
     }
 }
 
