@@ -116,3 +116,16 @@ Durante el desarrollo de la aplicación, trabajarás con **HTML**, **CSS**, **Ja
 5. **Entrega en tiempo y forma (1 Punto)**
    - Para optar a este punto es necesario obtener más de un 4 en los puntos 1,2 y 3.
 
+
+## ⚙️ Especificaciones:
+* **Proyecto realizado mediante:** *Visual Code Studio*
+* **Proyecto subido mediante:** *GitHub Desktop*
+
+## ℹ️ Informaci&oacute;n del proyecto:
+* **Autor:** *Alberto S&aacute;nchez Mac&iacute;as*
+* **Nota:** *9,10*
+* **Curso** *DAW 2-B*
+* **Asignatura:** *Desarrollo Web en Entorno Servidor*
+* **Profesor:** *Borja Rodr&iacute;guez Puerta*
+* **Instituto:** *IES Albarregas*
+* **Curso:** *2024/25*
